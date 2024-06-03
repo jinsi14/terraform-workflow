@@ -27,6 +27,11 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: Change working directory (optional)
+        # This step is optional if your Terraform configuration files are already in the project root.
+        run: cd terraform  # Change directory to where your Terraform files are located
+        shell: bash
+
       - name: Initialize Terraform
         run: terraform init
         env:
