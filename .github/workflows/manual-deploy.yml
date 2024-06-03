@@ -1,0 +1,44 @@
+name: Manual Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'develop'
+        type: string
+      environment:
+        description: 'Environment to deploy to (e.g., dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Initialize Terraform
+        run: terraform init
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.environment }}
+
+      - name: Plan Terraform
+        run: terraform plan -var="environment=${{ github.event.inputs.environment }}"
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.environment }}
+
+      - name: Apply Terraform
+        if: github.event.inputs.auto_apply == 'true'
+        run: terraform apply -auto-approve -var="environment=${{ github.event.inputs.environment }}"
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.environment }}
