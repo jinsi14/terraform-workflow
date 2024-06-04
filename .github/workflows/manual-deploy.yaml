@@ -50,10 +50,15 @@ jobs:
         working-directory: terraform/iam
 
       - name: Plan Terraform
-        run: terraform plan -input=false -var="env=${{ github.event.inputs.env }}"
+        run: terraform plan -input=false -out=tfplan -var="env=${{ github.event.inputs.env }}"
+        working-directory: terraform/iam
+
+      - name: Save Plan Output
+        id: save_plan_output
+        run: echo "TF_PLAN_PATH=tfplan" >> $GITHUB_ENV
         working-directory: terraform/iam
 
       - name: Apply Terraform
         if: github.event.inputs.auto_apply == 'true'
-        run: terraform apply -auto-approve -var="env=${{ github.event.inputs.env }}"
+        run: terraform apply -input=false -auto-approve ${{ env.TF_PLAN_PATH }}
         working-directory: terraform/iam
