@@ -21,8 +21,8 @@ on:
         type: string
       auto_apply:
         description: 'Automatically apply the changes'
-        required: false
-        default: false
+        required: true
+        default: true
         type: boolean
 
 jobs:
