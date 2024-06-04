@@ -9,7 +9,7 @@ on:
         default: 'develop'
         type: string
       env:
-        description: 'Environment to deploy to (e.g., dev, staging, prod)'
+        description: 'Environment to deploy to (e.g., dev, non-prod)'
         required: true
         default: 'dev'
         type: string
@@ -37,10 +37,7 @@ jobs:
           if [ "${{ github.event.inputs.env }}" == "dev" ]; then
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.env }}" == "staging" ]; then
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.env }}" == "prod" ]; then
+          elif [ "${{ github.event.inputs.env }}" == "non-prod" ]; then
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           fi
