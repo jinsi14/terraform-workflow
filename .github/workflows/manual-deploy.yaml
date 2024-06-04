@@ -1,12 +1,6 @@
   name: Terraform Deploy
 
   on:
-    push:
-      branches:
-        - develop
-    pull_request:
-      branches:
-        - main
     workflow_dispatch:
       inputs:
         branch:
