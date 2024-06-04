@@ -18,8 +18,8 @@ resource "aws_iam_policy" "developer_policy" {
 
   policy = templatefile("./configs/common/iam/iam_policy/digi-iam-developer-read-policy.tpl", 
   {
-    account_id = data.aws_caller_identity.current.account_id
-    #account_id = var.account_id
+    #account_id = data.aws_caller_identity.current.account_id
+    account_id = var.account_id
   })
   tags = local.tags
 }
