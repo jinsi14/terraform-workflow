@@ -25,7 +25,7 @@ variable "env" {
 
 variable "account_id" {
   type = string
-  default = "767252029631"
+  default = "538590669851"
 }
 
 variable "tags" {
