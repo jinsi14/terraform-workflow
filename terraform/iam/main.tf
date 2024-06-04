@@ -7,7 +7,9 @@ provider "aws" {
 resource "aws_iam_role" "developer_role" {
   name = format("%s-iam-%s-%s-role", var.prefix_company, var.lob, var.application)
 
-  assume_role_policy = templatefile("./configs/common/iam/iam_role/digi-iam-developer-read-role.tpl", {})
+  assume_role_policy = templatefile("./configs/common/iam/iam_role/digi-iam-developer-read-role.tpl", {
+    account_id = var.account_id
+  })
   tags = local.tags
 }
 
