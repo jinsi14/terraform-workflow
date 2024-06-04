@@ -54,6 +54,6 @@ jobs:
         working-directory: terraform/iam
 
       - name: Apply Terraform
-        if: ${{github.event.inputs.auto_apply == 'true'}}
+        
         run: terraform apply "tfplan" -auto-approve -var="env=${{ github.event.inputs.env }}"
         working-directory: terraform/iam
