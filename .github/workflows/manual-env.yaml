@@ -9,7 +9,7 @@ on:
         default: 'develop'
         type: string
       env:
-        description: 'Environment to deploy to (e.g., dev, staging, prod)'
+        description: 'Environment to deploy to (e.g., dev, non-prod)'
         required: true
         default: 'dev'
         type: string
@@ -22,6 +22,7 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.env }}
 
     steps:
       - name: Checkout repository
@@ -34,21 +35,25 @@ jobs:
 
       - name: Configure AWS credentials
         run: |
-          echo "::add-mask::${{ secrets[format('{0}_ACCESS_KEY_ID', github.event.inputs.env)] }}"
-          echo "::add-mask::${{ secrets[format('{0}_SECRET_ACCESS_KEY', github.event.inputs.env)] }}"
-          echo "AWS_ACCESS_KEY_ID=${{ secrets[format('{0}_ACCESS_KEY_ID', github.event.inputs.env)] }}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets[format('{0}_SECRET_ACCESS_KEY', github.event.inputs.env)] }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
+
+      - name: Verify AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+          echo "AWS_REGION=${AWS_REGION}"
 
       - name: Initialize Terraform
         run: terraform init -input=false
-        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
+        working-directory: terraform/iam
 
       - name: Plan Terraform
         run: terraform plan -input=false -out=tfplan -var="env=${{ github.event.inputs.env }}"
-        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
+        working-directory: terraform/iam
 
       - name: Apply Terraform
-        run: terraform apply "tfplan" 
-        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
-        if: ${{ github.event.inputs.auto_apply }}  # Only apply if auto_apply is true
+        run: terraform apply "tfplan"
+        working-directory: terraform/iam
+        if: ${{ github.event.inputs.auto_apply }}
