@@ -45,17 +45,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1 # Update this to your preferred AWS region
 
-      - name: Get AWS Account ID
-        id: get_account_id
-        run: |
-          echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_ENV
-
       - name: Initialize Terraform
         run: terraform init -input=false
         working-directory: terraform/iam
 
       - name: Plan Terraform
-        run: terraform plan -input=false -out=tfplan -var="env=${{ github.event.inputs.env }}" -var="account_id=${{ env.AWS_ACCOUNT_ID }}"
+        run: terraform plan -input=false -out=tfplan -var="env=${{ github.event.inputs.env }}"
         working-directory: terraform/iam
 
       - name: Save Plan Output
