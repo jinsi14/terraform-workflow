@@ -1,0 +1,54 @@
+name: Terraform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'develop'
+        type: string
+      env:
+        description: 'Environment to deploy to (e.g., dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: string
+      auto_apply:
+        description: 'Automatically apply the changes'
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Configure AWS credentials
+        run: |
+          echo "::add-mask::${{ secrets[format('{0}_ACCESS_KEY_ID', github.event.inputs.env)] }}"
+          echo "::add-mask::${{ secrets[format('{0}_SECRET_ACCESS_KEY', github.event.inputs.env)] }}"
+          echo "AWS_ACCESS_KEY_ID=${{ secrets[format('{0}_ACCESS_KEY_ID', github.event.inputs.env)] }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets[format('{0}_SECRET_ACCESS_KEY', github.event.inputs.env)] }}" >> $GITHUB_ENV
+          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
+
+      - name: Initialize Terraform
+        run: terraform init -input=false
+        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
+
+      - name: Plan Terraform
+        run: terraform plan -input=false -out=tfplan -var="env=${{ github.event.inputs.env }}"
+        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
+
+      - name: Apply Terraform
+        run: terraform apply "tfplan" 
+        working-directory: terraform/iam  # Assuming all configs are in terraform/iam 
+        if: ${{ github.event.inputs.auto_apply }}  # Only apply if auto_apply is true
