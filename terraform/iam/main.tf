@@ -7,9 +7,7 @@ provider "aws" {
 resource "aws_iam_role" "developer_role" {
   name = format("%s-iam-%s-%s-role", var.prefix_company, var.lob, var.application)
 
-  assume_role_policy = templatefile("./configs/common/iam/iam_role/digi-iam-developer-read-role.tpl", {
-    account_id = var.account_id
-  })
+  assume_role_policy = templatefile("./configs/common/iam/iam_role/digi-iam-developer-read-role.tpl", {})
   tags = local.tags
 }
 
@@ -20,8 +18,8 @@ resource "aws_iam_policy" "developer_policy" {
 
   policy = templatefile("./configs/common/iam/iam_policy/digi-iam-developer-read-policy.tpl", 
   {
-    #account_id = data.aws_caller_identity.current.account_id
-    account_id = var.account_id
+    account_id = data.aws_caller_identity.current.account_id
+    #account_id = var.account_id
   })
   tags = local.tags
 }

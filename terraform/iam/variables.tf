@@ -23,10 +23,10 @@ variable "env" {
     default = "dev"
 }
 
-variable "account_id" {
-  type = string
-  default = "538590669851"
-}
+#variable "account_id" {
+#  type = string
+#  default = "538590669851"
+#}
 
 variable "tags" {
   description = "A map of tags to assign to the resources created by this module. If configured with a provider [`default_tags` configuration block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags) present, tags with matching keys will overwrite those defined at the provider-level."
