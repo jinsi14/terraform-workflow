@@ -55,5 +55,5 @@ jobs:
 
       - name: Apply Terraform
         
-        run: terraform apply "tfplan" -var="env=${{ github.event.inputs.env }}"
+        run: terraform apply "tfplan"
         working-directory: terraform/iam
