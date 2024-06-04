@@ -50,10 +50,10 @@ jobs:
         working-directory: terraform/iam
 
       - name: Plan Terraform
-        run: terraform plan -input=false -var="environment=${{ github.event.inputs.environment }}"
+        run: terraform plan -input=false -var="env=${{ github.event.inputs.env }}"
         working-directory: terraform/iam
 
       - name: Apply Terraform
         if: github.event.inputs.auto_apply == 'true'
-        run: terraform apply -auto-approve -var="environment=${{ github.event.inputs.environment }}"
+        run: terraform apply -auto-approve -var="env=${{ github.event.inputs.env }}"
         working-directory: terraform/iam
